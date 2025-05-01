@@ -26,6 +26,11 @@ app.use("/api/v1/user", userRouter)
 app.use("/api/v1/project", projectRouter)
 app.use("/api/v1/task", taskRouter)
 
+app.use("/health",(req,res)=>{
+    res.status(200).json({
+        message:"Api is working"
+    })
+})
 
 app.use(errorHandler)
 
