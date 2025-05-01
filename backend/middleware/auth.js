@@ -5,6 +5,8 @@ import userModel from "../model/User.js";
 
 const auth = asyncHandler(async (req, res, next) => {
     const { token } = req.cookies;
+    console.log(token);
+    
     if (!token) return next(createError(422, "Token required."));
 
     let isvalid;
