@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import RootLayout from "../layouts/RootLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Dashboard from "../pages/Dashboard";
@@ -18,6 +18,10 @@ const router = createBrowserRouter([
                 path: "",
                 element: <DashboardLayout />,
                 children: [
+                    {
+                        path: "",
+                        element: <Navigate to="/dashboard" replace />,
+                    },
                     { path: "dashboard", element: <Dashboard /> },
                     { path: "projects", element: <Projects /> },
                     { path: "tasks/:projectId", element: <Tasks /> },
@@ -31,8 +35,8 @@ const router = createBrowserRouter([
         ],
     },
     // {
-    //     path: "*",
-    //     element: <NotFound />,
+    //   path: "*",
+    //   element: <NotFound />,
     // },
 ]);
 
