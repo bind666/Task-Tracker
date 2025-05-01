@@ -20,14 +20,12 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    accessToken: {
-        type: String,
-        default: null
-    },
-    refreshToken: {
+    token: {
         type: String,
         default: null
     }
+}, {
+    timestamps: true
 });
 
 userSchema.pre("save", async function (next) {
@@ -40,8 +38,6 @@ userSchema.pre("save", async function (next) {
     } catch (error) {
         return next(createError(500, error.message))
     }
-}, {
-    timestamps: true
 })
 
 const userModel = model("userModel", userSchema);

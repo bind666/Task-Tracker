@@ -1,62 +1,73 @@
 import userModel from "../model/User.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import createError from "http-errors";
-import asyncHandler from "express-async-handler"
+import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import { generateCookies } from "../utils/utils.js";
 
+// Register User
 const registerUser = asyncHandler(async (req, res, next) => {
-    const isUser = await userModel.findOne({ email: req.body.email })
-    // console.log(req.body.email);
-    if (isUser) {
-        return next(createError(422, "user already exists"))
-    }
+    const isUser = await userModel.findOne({ email: req.body.email });
+    if (isUser) return next(createError(422, "User already exists"));
 
-    const user = await userModel.create(req.body)
-    res.status(200).json(new ApiResponse(user, "user registered sucessfully"))
-})
+    const user = await userModel.create(req.body);
+    res.status(200).json(new ApiResponse(user, "User registered successfully"));
+});
 
+// Login User
 const loginUser = asyncHandler(async (req, res, next) => {
-    const user = await userModel.findOne({ email: req.body.email })
+    const user = await userModel.findOne({ email: req.body.email });
+    if (!user) return next(createError(404, "Invalid credentials"));
 
-    if (!user) {
-        return next(createError(404, "Invalid credintials"))
-    }
-
-    const isPassword = await bcrypt.compare(req.body.password, user.password) //comparing a hashed password
-    if (!isPassword) {
-        return next(createError(401, "Invalid credintials"))
-    }
+    const isPassword = await bcrypt.compare(req.body.password, user.password);
+    if (!isPassword) return next(createError(401, "Invalid credentials"));
 
     const payload = {
         _id: user._id,
         name: user.name,
-        email: user.email
-    }
+        email: user.email,
+    };
 
-    const { refreshToken, accessToken } = generateCookies(payload)
-    user.refreshToken = refreshToken;
-    user.accessToken = accessToken;
-    await user.save()
-    // user.password = null
+    const { token } = generateCookies(payload);
 
-    res.status(200)
-        .cookie("refreshToken", refreshToken, { httpOnly: true, expiresIn: "24h" })
-        .cookie("accessToken", accessToken, { httpOnly: true, expiresIn: "8h" })
-        .json(new ApiResponse({ user, refreshToken, accessToken }, "user registered sucessfully"))
-})
+    user.token = token;
+    await user.save();
 
+    const userData = {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        country: user.country,
+        token: user.token
+    };
+
+    res
+        .status(200)
+        .cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+        })
+        .json(new ApiResponse(userData, "User logged in successfully"));
+});
+
+// Logout User
 const logoutUser = asyncHandler(async (req, res, next) => {
-    const { _id } = req.user
-    await userModel.findByIdAndUpdate(_id, {
-        refreshToken: null,
-        accessToken: null
-    })
+    try {
+        const { _id } = req.user;
+        await userModel.findByIdAndUpdate(_id, { token: null });
 
-    res.status(200)
-        .cookie("refreshToken", null, { httpOnly: true, expiresIn: new Date() })
-        .cookie("accessToken", null, { httpOnly: true, expiresIn: new Date() })
-        .json(new ApiResponse(null, "logout successfully"))
-})
+        res.status(200)
+            .clearCookie("token", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+            })
+            .json(new ApiResponse(null, "Logout successfully"));
+    } catch (err) {
+        return next(createError(500, "Logout failed"));
+    }
+});
 
-export { registerUser, loginUser, logoutUser }
+export { registerUser, loginUser, logoutUser };

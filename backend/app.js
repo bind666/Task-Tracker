@@ -10,8 +10,8 @@ import { taskRouter } from "./routes/taskRoutes.js"
 
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit:"1MB"}));
+app.use(express.urlencoded({limit:"1MB", extended: true }));
 app.use(cookieParser())
 // app.use(cors());
 app.use(cors({

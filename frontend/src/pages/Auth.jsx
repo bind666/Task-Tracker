@@ -28,13 +28,11 @@ const Auth = () => {
 
         try {
             if (isLogin) {
-                const res = await API.post("/user/login", {
+                await API.post("/user/login", {
                     email: form.email,
                     password: form.password,
                 });
 
-                const { accessToken } = res.data.data;
-                localStorage.setItem("token", accessToken);
                 navigate("/dashboard");
             } else {
                 await API.post("/user/register", form);

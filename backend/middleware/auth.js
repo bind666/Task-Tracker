@@ -4,42 +4,24 @@ import { checkTokenExpiry, verifyToken } from "../utils/utils.js";
 import userModel from "../model/User.js";
 
 const auth = asyncHandler(async (req, res, next) => {
-    const { accessToken } = req.cookies;
-    if (!accessToken) {
-        return next(createError(422, "Token required."))
+    const { token } = req.cookies;
+    if (!token) return next(createError(422, "Token required."));
+
+    let isvalid;
+    try {
+        isvalid = await verifyToken(token);
+    } catch (err) {
+        return next(createError(401, "Invalid token."));
     }
 
-    const isvalid = await verifyToken(accessToken);
-    
-    if (!isvalid) {
-        return next(createError(422, "invalid token."))
-    }
+    const isExpired = checkTokenExpiry(isvalid.exp);
+    if (isExpired) return next(createError(401, "Token expired."));
 
-    const isExpire = checkTokenExpiry(isvalid.exp)
-    if (isExpire) {
-        return next(createError(401, "Token expired."))
-    }
+    const user = await userModel.findOne({ email: isvalid.email, token });
+    if (!user) return next(createError(422, "Invalid user."));
 
-    const user = await userModel.findOne({ email: isvalid.email, accessToken })
-    if (!user) {
-        return next(createError(422, "Invalid user."))
-    }
-
-    req.user = user
-    // console.log(45);
-    // console.log(user);
-    next()
-})
-
-const isAdmin = asyncHandler(async (req, res, next) => {
-
-    const user = await userModel.findById(req.user._id);
-    // console.log(user.role);
-
-    if (user.role !== "admin") {
-        return next(createError(403, "Access denied, Admin only."));
-    }
+    req.user = user;
     next();
-})
+});
 
-export { auth, isAdmin }
+export { auth };
