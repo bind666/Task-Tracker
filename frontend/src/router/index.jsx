@@ -18,10 +18,10 @@ const router = createBrowserRouter([
                 path: "",
                 element: <DashboardLayout />,
                 children: [
-                    {
-                        path: "",
-                        element: <Navigate to="/dashboard" replace />,
-                    },
+                    // {
+                    //     path: "",
+                    //     element: <Navigate to="/dashboard" replace />,
+                    // },
                     { path: "dashboard", element: <Dashboard /> },
                     { path: "projects", element: <Projects /> },
                     { path: "tasks/:projectId", element: <Tasks /> },
