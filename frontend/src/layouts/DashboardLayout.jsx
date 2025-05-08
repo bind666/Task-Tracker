@@ -3,6 +3,7 @@ import { isAuthenticated } from "../utils/auth";
 import { useEffect, useState } from "react";
 
 const DashboardLayout = () => {
+    
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true); // Start in loading state
     const location = useLocation();

@@ -3,9 +3,18 @@ import { logout, isAuthenticated } from "../utils/auth";
 
 const Navbar = () => {
     const navigate = useNavigate();
+    // const [loggedIn, setLoggedIn] = useState(false);
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         const authStatus = await isAuthenticated();
+    //         setLoggedIn(authStatus);
+    //     };
+    //     checkAuth();
+    // }, []);
 
     const handleLogout = () => {
         logout();
+        // setLoggedIn(false); // update state immediately
         navigate("/auth");
     };
 

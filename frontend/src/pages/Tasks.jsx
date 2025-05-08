@@ -88,7 +88,7 @@ const Tasks = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-4 border my-4">
-      {/* Header with Back Button and Project Title */}
+      {/* Header with back button and project title */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">
           {project?.title ? `Tasks for: ${project.title}` : "Loading project..."}
@@ -101,11 +101,11 @@ const Tasks = () => {
         </button>
       </div>
 
-      {/* Error and Message */}
+      {/* Error and message */}
       {error && <p className="text-red-500 mb-2">{error}</p>}
       {msg && <p className="text-green-500 mb-2">{msg}</p>}
 
-      {/* Task Form */}
+      {/* Task form */}
       <form onSubmit={handleSubmit} className="space-y-3 mb-6">
         <input
           type="text"

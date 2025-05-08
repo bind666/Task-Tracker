@@ -14,6 +14,7 @@ app.use(express.json({limit:"1MB"}));
 app.use(express.urlencoded({limit:"1MB", extended: true }));
 app.use(cookieParser())
 // app.use(cors());
+
 app.use(cors({
     origin: ["http://localhost:5173", "http://localhost:5174","https://task-tracker-neon-six.vercel.app"],
     credentials: true,

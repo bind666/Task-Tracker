@@ -3,14 +3,18 @@ import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 const Auth = () => {
+
     const [isLogin, setIsLogin] = useState(true);
+
     const [form, setForm] = useState({
         name: "",
         email: "",
         password: "",
         country: "",
     });
+
     const [error, setError] = useState("");
+    
     const navigate = useNavigate();
 
     const handleToggle = () => {
@@ -46,19 +50,6 @@ const Auth = () => {
         }
     };
 
-    // useEffect(() => {
-    //     async function fetchData() {
-    //         try {
-    //             const data = await isAuthenticated();
-    //             if(data === null){
-    //                 return navigate("/")
-    //             }
-    //         } catch (error) {
-    //             console.error("Authentication check failed:", error);
-    //         } 
-    //     }
-    //     fetchData();
-    // }, [location.pathname]);
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">

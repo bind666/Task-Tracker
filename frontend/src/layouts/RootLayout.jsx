@@ -4,7 +4,9 @@ import { useEffect } from "react";
 import { isAuthenticated } from "../utils/auth";
 
 const RootLayout = () => {
+
     const navigate = useNavigate();
+    
     useEffect(() => {
         async function fetchData() {
             try {
